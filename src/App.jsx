@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import TripForm from './components/TripForm'
-import TripResult from './components/TripResult'
+import DestinationCards from './components/DestinationCards'
 
 export default function App() {
-  const [result, setResult] = useState(null)
+  const [calcResult, setCalcResult] = useState(null)
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F2F5F8' }}>
@@ -21,18 +21,26 @@ export default function App() {
         <div className="mb-6">
           <h1 className="text-xl font-bold text-gray-900">Рассчитайте стоимость поездки</h1>
           <p className="text-sm text-gray-500 mt-1">
-            Укажите параметры — получите примерный бюджет с разбивкой по категориям
+            Укажите параметры — получите подборку направлений с разбивкой по бюджету
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-5 items-start">
 
           {/* Форма */}
-          <TripForm onCalculate={setResult} />
+          <TripForm onCalculate={setCalcResult} />
 
           {/* Результаты */}
-          {result ? (
-            <TripResult result={result} />
+          {calcResult ? (
+            <DestinationCards
+              results={calcResult.results}
+              currency={calcResult.currency}
+              nights={calcResult.nights}
+              budget={calcResult.budget}
+              adults={calcResult.adults}
+              children={calcResult.children}
+              hotelStars={calcResult.hotelStars}
+            />
           ) : (
             <div className="hidden lg:flex flex-col items-center justify-center
                             min-h-[400px] rounded-xl border-2 border-dashed border-gray-200 text-center p-8">
