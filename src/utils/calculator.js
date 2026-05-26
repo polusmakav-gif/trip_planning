@@ -2,7 +2,7 @@ import { RUSSIA_SET } from '../data/cities'
 import { DESTINATIONS } from '../data/destinations'
 
 const HOTEL = { 1: 1400, 2: 2800, 3: 5500, 4: 10000, 5: 20000 }
-const FOOD  = { light: 650, mix: 1400, restaurants: 3100 }
+const FOOD  = { self: 500, cafe: 1400, hotel_board: 2800 }
 const TRANSPORT = { public: 300, taxi: 1600, car: 3500 }
 const ACTIVITIES = { city: 550, beach: 320, active: 850, culture: 700 }
 const FLIGHT = { domestic: 8500, international: 32000 }

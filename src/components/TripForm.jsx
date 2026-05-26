@@ -114,13 +114,21 @@ export default function TripForm({ onCalculate }) {
     children:   0,
     hotel:      3,
     activities: 'city',
-    food:       'mix',
+    food:       'cafe',
     transport:  'public',
     currency:   'rub',
     budget:     '',
   })
 
   const set = (key) => (val) => setForm(f => ({ ...f, [key]: val }))
+
+  const formatBudget = (val) =>
+    val ? String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : ''
+
+  const handleBudgetChange = (e) => {
+    const raw = e.target.value.replace(/[\s ]/g, '').replace(/\D/g, '')
+    set('budget')(raw)
+  }
 
   const submit = (e) => {
     e.preventDefault()
@@ -137,15 +145,15 @@ export default function TripForm({ onCalculate }) {
       {/* 1. Бюджет */}
       <Field label="Мой бюджет" hint="(необязательно)">
         <div className="flex gap-2">
+          <input type="text" inputMode="numeric" value={formatBudget(form.budget)}
+            onChange={handleBudgetChange}
+            placeholder="Введите сумму" className="field-input flex-1" />
           <select value={form.currency} onChange={e => set('currency')(e.target.value)}
             className="field-input w-auto px-2">
             <option value="rub">₽</option>
             <option value="eur">€</option>
             <option value="usd">$</option>
           </select>
-          <input type="number" min={0} value={form.budget}
-            onChange={e => set('budget')(e.target.value)}
-            placeholder="Введите сумму" className="field-input flex-1" />
         </div>
       </Field>
 
@@ -206,9 +214,9 @@ export default function TripForm({ onCalculate }) {
 
       <Field label="Питание">
         <Pills value={form.food} onChange={set('food')} options={[
-          { value: 'light',       label: 'Минимум'   },
-          { value: 'mix',         label: 'Смешанный' },
-          { value: 'restaurants', label: 'Рестораны' },
+          { value: 'self',  label: 'Готовлю сам' },
+          { value: 'cafe',  label: 'В кафе'       },
+          { value: 'hotel_board', label: 'В отеле' },
         ]} />
       </Field>
 
