@@ -4,12 +4,23 @@ import DestinationCards from './components/DestinationCards'
 import RoutePlanForm from './components/RoutePlanForm'
 import TripResult from './components/TripResult'
 
-function EmptyState({ icon, text }) {
+function EmptyState() {
   return (
-    <div className="hidden lg:flex flex-col items-center justify-center
-                    min-h-[400px] rounded-xl border-2 border-dashed border-gray-200 text-center p-8">
-      <div className="text-5xl mb-3 opacity-40">{icon}</div>
-      <p className="text-gray-400 text-sm leading-relaxed">{text}</p>
+    <div className="hidden lg:flex relative overflow-hidden rounded-xl min-h-[520px]">
+      <img
+        src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&w=900&q=80"
+        alt="Путешествие"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/10" />
+      <div className="relative z-10 flex flex-col justify-end p-8 pb-10">
+        <p className="text-3xl font-extrabold text-white leading-tight">
+          Найдите поездку мечты
+        </p>
+        <p className="mt-2 text-base text-white/70 leading-relaxed max-w-xs">
+          Подберите направление по бюджету — или узнайте, во сколько обойдётся ваше путешествие
+        </p>
+      </div>
     </div>
   )
 }
@@ -85,7 +96,7 @@ export default function App() {
                     children={exploreResult.children}
                     hotelStars={exploreResult.hotelStars}
                   />
-                : <EmptyState icon="✈️" text={'Заполните параметры\nи нажмите «Рассчитать»'} />
+                : <EmptyState />
               }
             </>
           ) : (
@@ -93,7 +104,7 @@ export default function App() {
               <RoutePlanForm onCalculate={setRouteResult} />
               {routeResult
                 ? <TripResult result={routeResult} />
-                : <EmptyState icon="🗺️" text={'Укажите направление\nи нажмите «Рассчитать»'} />
+                : <EmptyState />
               }
             </>
           )}
