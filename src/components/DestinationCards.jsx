@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react'
 import { Plane, Building2, UtensilsCrossed, Sparkles } from 'lucide-react'
 import { fmt, pluralNights, HOTEL_LABELS } from '../utils/calculator'
-import { PHOTOS } from '../data/photos'
+import { WIKI_TITLES } from '../data/photos'
 
 const TYPE_STYLE = {
   city:    'bg-blue-50 text-blue-600',
@@ -9,25 +10,43 @@ const TYPE_STYLE = {
   culture: 'bg-purple-50 text-purple-700',
 }
 
+const TYPE_PLACEHOLDER = {
+  city:    'bg-gradient-to-br from-blue-200 to-blue-400',
+  beach:   'bg-gradient-to-br from-cyan-200 to-teal-400',
+  active:  'bg-gradient-to-br from-green-200 to-emerald-400',
+  culture: 'bg-gradient-to-br from-purple-200 to-violet-400',
+}
+
 function DestCard({ dest, currency, nights }) {
   const { id, name, country, typeLabel, type, total, flight, hotel, food, activities } = dest
   const tagCls = TYPE_STYLE[type] || 'bg-gray-100 text-gray-600'
-  const photo = PHOTOS[id]
+  const placeholderCls = TYPE_PLACEHOLDER[type] || 'bg-gradient-to-br from-gray-200 to-gray-400'
+
+  const [imgUrl, setImgUrl] = useState(null)
+
+  useEffect(() => {
+    const title = WIKI_TITLES[id]
+    if (!title) return
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`)
+      .then(r => r.json())
+      .then(d => { if (d.thumbnail?.source) setImgUrl(d.thumbnail.source) })
+      .catch(() => {})
+  }, [id])
 
   return (
     <div className="bg-white rounded-xl shadow-card overflow-hidden flex flex-col
                     hover:shadow-md transition-shadow cursor-default">
       {/* Фото */}
-      <div className="relative h-28 bg-gray-100 shrink-0">
-        {photo && (
+      <div className={`relative h-28 shrink-0 ${!imgUrl ? placeholderCls : ''}`}>
+        {imgUrl && (
           <img
-            src={photo}
+            src={imgUrl}
             alt={name}
             className="w-full h-full object-cover"
-            onError={e => { e.currentTarget.style.display = 'none' }}
+            onError={() => setImgUrl(null)}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
         <div className="absolute bottom-2 left-3">
           <p className="font-semibold text-white text-sm leading-tight drop-shadow">{name}</p>
           <p className="text-xs text-white/70 mt-0.5">{country}</p>
@@ -39,13 +58,11 @@ function DestCard({ dest, currency, nights }) {
 
       {/* Контент */}
       <div className="p-4 flex flex-col gap-3">
-        {/* Итого */}
         <div>
           <p className="text-xl font-bold text-tutu-blue leading-none">{fmt(total, currency)}</p>
           <p className="text-xs text-gray-400 mt-0.5">{pluralNights(nights)}</p>
         </div>
 
-        {/* Разбивка */}
         <div className="grid grid-cols-2 gap-x-3 gap-y-2 pt-2 border-t border-gray-100">
           {[
             { icon: Plane,           label: 'Перелёт', val: flight     },
@@ -75,7 +92,6 @@ export default function DestinationCards({ results, currency, nights, budget, ad
 
   return (
     <div>
-      {/* Заголовок */}
       <div className="flex items-baseline justify-between mb-4">
         <div>
           <h2 className="text-base font-semibold text-gray-900">Подборка направлений</h2>
@@ -89,7 +105,6 @@ export default function DestinationCards({ results, currency, nights, budget, ad
         </span>
       </div>
 
-      {/* Карточки */}
       {results.length === 0 ? (
         <div className="rounded-xl border-2 border-dashed border-gray-200 p-8 text-center">
           <p className="text-2xl mb-2">😔</p>
