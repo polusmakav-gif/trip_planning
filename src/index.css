@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background-color: #F2F5F8;
+    color: #1A1A2E;
+  }
+}
+
+@layer components {
+  .pill {
+    @apply px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer select-none border;
+  }
+  .pill-on {
+    @apply bg-tutu-blue text-white border-tutu-blue;
+  }
+  .pill-off {
+    @apply bg-white text-gray-700 border-gray-200 hover:border-tutu-blue hover:text-tutu-blue;
+  }
+  .field-input {
+    @apply w-full px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white
+           focus:outline-none focus:border-tutu-blue focus:ring-1 focus:ring-tutu-blue/30
+           transition-colors;
+  }
+}
