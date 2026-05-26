@@ -22,10 +22,10 @@ export default function App() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F2F5F8' }}>
 
-      <header style={{ backgroundColor: '#0055B8' }} className="px-4 py-3.5 shadow-sm">
+      <header className="bg-tutu-blue-dark px-4 py-3.5 shadow-sm">
         <div className="max-w-5xl mx-auto flex items-center gap-3">
           <span className="text-white font-bold text-lg tracking-tight">туту.ру</span>
-          <span className="text-blue-300 text-sm">/ калькулятор поездки</span>
+          <span className="text-purple-300 text-sm">/ калькулятор поездки</span>
         </div>
       </header>
 

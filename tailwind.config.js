@@ -4,12 +4,12 @@ export default {
     extend: {
       colors: {
         tutu: {
-          blue: '#006CE0',
-          'blue-dark': '#0055B8',
-          'blue-light': '#EBF3FF',
-          'blue-mid': '#DDEEFF',
+          blue: '#7C3AED',
+          'blue-dark': '#15104F',
+          'blue-light': '#EDE9FF',
+          'blue-mid': '#DDD6FF',
           orange: '#FF6600',
-          'orange-hover': '#E05800',
+          'orange-hover': '#E05000',
         },
       },
       boxShadow: {

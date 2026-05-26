@@ -38,14 +38,14 @@ export default function TripResult({ result }) {
     <div className="space-y-4">
 
       {/* Итого */}
-      <div className="rounded-xl p-6 text-white" style={{ backgroundColor: '#0055B8' }}>
-        <p className="text-sm text-blue-200 mb-1">Примерная стоимость</p>
+      <div className="rounded-xl p-6 text-white bg-tutu-blue-dark">
+        <p className="text-sm text-purple-300 mb-1">Примерная стоимость</p>
         {destinationName && (
           <p className="text-lg font-semibold text-white mb-0.5">{destinationName}</p>
         )}
         <p className="text-3xl font-bold tracking-tight">{fmt(total, currency)}</p>
 
-        <div className="flex flex-wrap gap-x-4 mt-1.5 text-sm text-blue-200">
+        <div className="flex flex-wrap gap-x-4 mt-1.5 text-sm text-purple-200">
           <span>{pluralNights(nights)}</span>
           <span>{passengersLabel}</span>
           <span>{'★'.repeat(hotelStars)} {HOTEL_LABELS[hotelStars]}</span>
@@ -53,7 +53,7 @@ export default function TripResult({ result }) {
         </div>
 
         {perAdult && adults > 1 && (
-          <p className="mt-1 text-xs text-blue-300">≈ {fmt(perAdult, currency)} на взрослого</p>
+          <p className="mt-1 text-xs text-purple-300">≈ {fmt(perAdult, currency)} на взрослого</p>
         )}
 
         {budgetFits !== null && (
