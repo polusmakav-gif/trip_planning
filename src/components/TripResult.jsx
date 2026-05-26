@@ -1,4 +1,4 @@
-import { fmt, pluralNights } from '../utils/calculator'
+import { fmt, pluralNights, HOTEL_LABELS } from '../utils/calculator'
 
 const CATEGORIES = [
   { key: 'flight',     label: 'Перелёт / транспорт', icon: '✈️' },
@@ -14,18 +14,24 @@ function Bar({ pct }) {
     <div className="mt-1.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
       <div
         className="h-full bg-tutu-blue rounded-full"
-        style={{ width: `${pct}%`, transition: 'width 0.4s ease' }}
+        style={{ width: `${Math.max(2, pct)}%`, transition: 'width 0.4s ease' }}
       />
     </div>
   )
 }
 
 export default function TripResult({ result }) {
-  const { total, currency, persons, nights, budget } = result
+  const { total, currency, adults, children, nights, hotelStars, budget, isIntl } = result
 
   const budgetNum = budget ? Number(budget) : null
   const budgetFits = budgetNum ? budgetNum >= total : null
-  const perPerson = persons > 1 ? Math.round(total / persons / 100) * 100 : null
+  const totalPersons = adults + children
+  const perAdult = adults > 0 ? Math.round(total / adults / 100) * 100 : null
+
+  const passengersLabel = [
+    adults > 0 && `${adults} взр.`,
+    children > 0 && `${children} реб.`,
+  ].filter(Boolean).join(', ')
 
   return (
     <div className="space-y-4">
@@ -35,22 +41,24 @@ export default function TripResult({ result }) {
         <p className="text-sm text-blue-200 mb-1">Примерная стоимость</p>
         <p className="text-3xl font-bold tracking-tight">{fmt(total, currency)}</p>
 
-        <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1.5 text-sm text-blue-200">
+        <div className="flex flex-wrap gap-x-4 mt-1.5 text-sm text-blue-200">
           <span>{pluralNights(nights)}</span>
-          {persons > 1 && <span>{persons} чел.</span>}
-          {perPerson && <span>≈ {fmt(perPerson, currency)} / чел.</span>}
+          <span>{passengersLabel}</span>
+          <span>{'★'.repeat(hotelStars)} {HOTEL_LABELS[hotelStars]}</span>
+          {isIntl && <span>🌍 За рубеж</span>}
         </div>
+
+        {perAdult && adults > 1 && (
+          <p className="mt-1 text-xs text-blue-300">≈ {fmt(perAdult, currency)} на взрослого</p>
+        )}
 
         {budgetFits !== null && (
           <div className={`mt-4 px-3 py-2 rounded-lg text-sm font-medium ${
-            budgetFits
-              ? 'bg-green-500/20 text-green-100'
-              : 'bg-red-500/20 text-red-100'
+            budgetFits ? 'bg-green-500/20 text-green-100' : 'bg-red-500/20 text-red-100'
           }`}>
             {budgetFits
               ? `✓ Укладывается в бюджет ${fmt(budgetNum, currency)}`
-              : `✗ Превышает бюджет на ${fmt(total - budgetNum, currency)}`
-            }
+              : `✗ Превышает бюджет на ${fmt(total - budgetNum, currency)}`}
           </div>
         )}
       </div>
@@ -58,7 +66,6 @@ export default function TripResult({ result }) {
       {/* Разбивка */}
       <div className="bg-white rounded-xl shadow-card p-6">
         <p className="text-sm font-semibold text-gray-700 mb-4">Разбивка по статьям</p>
-
         <div className="space-y-4">
           {CATEGORIES.map(cat => {
             const amount = result[cat.key]
@@ -69,7 +76,7 @@ export default function TripResult({ result }) {
                   <span className="text-sm text-gray-600">
                     <span className="mr-1.5">{cat.icon}</span>{cat.label}
                   </span>
-                  <div className="text-right shrink-0 ml-2">
+                  <div className="shrink-0 ml-2 text-right">
                     <span className="text-sm font-medium text-gray-900">{fmt(amount, currency)}</span>
                     <span className="text-xs text-gray-400 ml-1">{pct}%</span>
                   </div>
@@ -87,7 +94,7 @@ export default function TripResult({ result }) {
       </div>
 
       <p className="text-xs text-gray-400 text-center px-2">
-        Расчёт приблизительный. Реальные цены зависят от дат, конкретного направления и наличия билетов.
+        Расчёт приблизительный. Реальные цены зависят от дат, направления и наличия билетов.
       </p>
     </div>
   )

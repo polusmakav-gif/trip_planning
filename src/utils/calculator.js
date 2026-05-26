@@ -1,38 +1,36 @@
-// Base rates in RUB
-const BASE = {
-  hotel: {
-    budget:   2400,   // per room per night
-    standard: 5200,
-    comfort:  12000,
-  },
-  food: {
-    light:       650,   // per person per day
-    mix:        1400,
-    restaurants: 3100,
-  },
-  transport: {
-    walk:   80,    // total per day (all travelers)
-    public: 300,
-    taxi:  1600,
-  },
-  activities: {
-    city:   550,   // per person per day
-    beach:  320,
-    active: 850,
-  },
-  flight: {
-    domestic:      8500,  // round trip per person
-    international: 32000,
-  },
+import { RUSSIA_SET } from '../data/cities'
+
+const HOTEL = {
+  1: 1400,   // хостел
+  2: 2800,   // эконом
+  3: 5500,   // стандарт
+  4: 10000,  // комфорт
+  5: 20000,  // люкс
 }
 
-const TRAVELERS = {
-  solo:   { persons: 1, rooms: 1 },
-  couple: { persons: 2, rooms: 1 },
-  family: { persons: 4, rooms: 2 },
+const FOOD = {
+  light:       650,
+  mix:        1400,
+  restaurants: 3100,
 }
 
-// Seasonal multiplier by month (1–12)
+const TRANSPORT = {
+  public:     300,
+  taxi:      1600,
+  car:       3500,
+}
+
+const ACTIVITIES = {
+  city:   550,
+  beach:  320,
+  active: 850,
+}
+
+const FLIGHT = {
+  domestic:      8500,
+  international: 32000,
+}
+
 const SEASON = {
   1: 0.88, 2: 0.82, 3: 0.90, 4: 0.97,
   5: 1.12, 6: 1.22, 7: 1.38, 8: 1.32,
@@ -43,51 +41,66 @@ const TO_RUB = { rub: 1, eur: 93, usd: 85 }
 
 const round100 = (v) => Math.round(v / 100) * 100
 
-export function calculate(params) {
-  const { nights, travelers, hotel, food, transport, activities, destination, month, currency } = params
+function getRooms(adults) {
+  return Math.max(1, Math.ceil(adults / 2))
+}
 
+export const HOTEL_LABELS = {
+  1: 'Хостел', 2: 'Эконом', 3: 'Стандарт', 4: 'Комфорт', 5: 'Люкс',
+}
+
+export function calculate(params) {
+  const { to, nights, adults, children, hotel, food, transport, activities, month, currency } = params
+
+  const isIntl = to ? !RUSSIA_SET.has(to) : false
   const days = nights + 1
-  const { persons, rooms } = TRAVELERS[travelers]
+  const rooms = getRooms(adults)
   const season = SEASON[Number(month)]
   const rate = TO_RUB[currency]
 
-  const rawFlight     = BASE.flight[destination] * persons
-  const rawHotel      = BASE.hotel[hotel] * nights * rooms * season
-  const rawFood       = BASE.food[food] * days * persons * season
-  const rawTransport  = BASE.transport[transport] * days * season
-  const rawActivities = BASE.activities[activities] * days * persons * season
+  const flightPerPerson = FLIGHT[isIntl ? 'international' : 'domestic']
+  const totalPersons = adults + children
+
+  const rawFlight     = flightPerPerson * (adults + children * 0.7)
+  const rawHotel      = HOTEL[hotel] * nights * rooms * season
+  const rawFood       = FOOD[food] * days * season * (adults + children * 0.6)
+  const rawTransport  = TRANSPORT[transport] * days * season
+  const rawActivities = ACTIVITIES[activities] * days * season * (adults + children * 0.5)
 
   const rawSub  = rawFlight + rawHotel + rawFood + rawTransport + rawActivities
   const rawMisc = rawSub * 0.07
   const rawTotal = rawSub + rawMisc
 
-  const to = (v) => round100(v / rate)
+  const to100 = (v) => round100(v / rate)
 
   return {
-    flight:     to(rawFlight),
-    hotel:      to(rawHotel),
-    food:       to(rawFood),
-    transport:  to(rawTransport),
-    activities: to(rawActivities),
-    misc:       to(rawMisc),
-    total:      to(rawTotal),
+    flight:     to100(rawFlight),
+    hotel:      to100(rawHotel),
+    food:       to100(rawFood),
+    transport:  to100(rawTransport),
+    activities: to100(rawActivities),
+    misc:       to100(rawMisc),
+    total:      to100(rawTotal),
     currency,
-    persons,
+    adults,
+    children,
+    totalPersons,
     nights,
+    hotelStars: hotel,
+    isIntl,
   }
 }
 
 export function fmt(amount, currency) {
   const n = new Intl.NumberFormat('ru-RU').format(amount)
-  if (currency === 'rub') return `${n} ₽`
   if (currency === 'eur') return `€${n}`
-  return `$${n}`
+  if (currency === 'usd') return `$${n}`
+  return `${n} ₽`
 }
 
 export function pluralNights(n) {
-  const mod10 = n % 10
-  const mod100 = n % 100
-  if (mod10 === 1 && mod100 !== 11) return `${n} ночь`
-  if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return `${n} ночи`
+  const m = n % 10, h = n % 100
+  if (m === 1 && h !== 11) return `${n} ночь`
+  if ([2,3,4].includes(m) && ![12,13,14].includes(h)) return `${n} ночи`
   return `${n} ночей`
 }
