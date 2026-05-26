@@ -119,46 +119,19 @@ export default function RoutePlanForm({ onCalculate }) {
     food:       'cafe',
     transport:  'public',
     currency:   'rub',
-    budget:     '',
   })
 
   const set = (key) => (val) => setForm(f => ({ ...f, [key]: val }))
 
-  const formatBudget = (val) =>
-    val ? String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : ''
-
-  const handleBudgetChange = (e) => {
-    const raw = e.target.value.replace(/[\s ]/g, '').replace(/\D/g, '')
-    set('budget')(raw)
-  }
-
   const submit = (e) => {
     e.preventDefault()
-    const budget = form.budget ? Number(form.budget) : null
-    const result = calculateRoute({ ...form, nights: Number(form.nights), budget })
+    const result = calculateRoute({ ...form, nights: Number(form.nights), budget: null })
     onCalculate(result)
   }
 
   return (
     <form onSubmit={submit} className="bg-white rounded-xl shadow-card p-6 space-y-5">
       <h2 className="text-base font-semibold text-gray-900">Параметры поездки</h2>
-
-      {/* Бюджет */}
-      <Field label="Мой бюджет" hint="(необязательно)">
-        <div className="flex gap-2">
-          <input type="text" inputMode="numeric" value={formatBudget(form.budget)}
-            onChange={handleBudgetChange}
-            placeholder="Введите сумму" className="field-input flex-1" />
-          <select value={form.currency} onChange={e => set('currency')(e.target.value)}
-            className="field-input w-auto px-2">
-            <option value="rub">₽</option>
-            <option value="eur">€</option>
-            <option value="usd">$</option>
-          </select>
-        </div>
-      </Field>
-
-      <Divider />
 
       {/* Маршрут */}
       <Field label="Откуда" hint="(необязательно)">
