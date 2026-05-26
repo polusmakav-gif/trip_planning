@@ -90,6 +90,43 @@ export function calculateForDestinations(params) {
   return budget ? results.filter(r => r.total <= budget) : results
 }
 
+// Конкретное направление с поиском профиля в DESTINATIONS
+export function calculateRoute(params) {
+  const { to, nights, adults, children, hotel, food, transport, activities, month, currency, budget } = params
+  const isIntl = to ? !RUSSIA_SET.has(to) : false
+  const days   = nights + 1
+  const rooms  = getRooms(adults)
+  const season = SEASON[Number(month)]
+  const rate   = TO_RUB[currency]
+  const actKey = ACTIVITIES[activities] !== undefined ? activities : 'city'
+
+  const destProfile = DESTINATIONS.find(d => d.name.toLowerCase() === (to || '').toLowerCase())
+  const cf = destProfile ? destProfile.costFactor : (isIntl ? 1.2 : 1.0)
+  const ff = destProfile ? destProfile.flightFactor : (isIntl ? 1.0 : 0.5)
+  const baseFlightRub = FLIGHT[isIntl ? 'international' : 'domestic']
+
+  const rawFlight     = baseFlightRub * ff * (adults + children * 0.7)
+  const rawHotel      = HOTEL[hotel] * nights * rooms * season * cf
+  const rawFood       = FOOD[food] * days * season * (adults + children * 0.6) * cf
+  const rawTransport  = TRANSPORT[transport] * days * season * cf
+  const rawActivities = ACTIVITIES[actKey] * days * season * (adults + children * 0.5) * cf
+
+  const rawSub   = rawFlight + rawHotel + rawFood + rawTransport + rawActivities
+  const rawMisc  = rawSub * 0.07
+  const rawTotal = rawSub + rawMisc
+  const to100    = (v) => round100(v / rate)
+
+  return {
+    flight: to100(rawFlight), hotel: to100(rawHotel),
+    food: to100(rawFood), transport: to100(rawTransport),
+    activities: to100(rawActivities), misc: to100(rawMisc),
+    total: to100(rawTotal),
+    currency, adults, children, nights, hotelStars: hotel, isIntl,
+    budget: budget ? Number(budget) : null,
+    destinationName: to,
+  }
+}
+
 export function fmt(amount, currency) {
   const n = new Intl.NumberFormat('ru-RU').format(amount)
   if (currency === 'eur') return `€${n}`

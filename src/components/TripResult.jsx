@@ -21,7 +21,7 @@ function Bar({ pct }) {
 }
 
 export default function TripResult({ result }) {
-  const { total, currency, adults, children, nights, hotelStars, budget, isIntl } = result
+  const { total, currency, adults, children, nights, hotelStars, budget, isIntl, destinationName } = result
 
   const budgetNum = budget ? Number(budget) : null
   const budgetFits = budgetNum ? budgetNum >= total : null
@@ -39,6 +39,9 @@ export default function TripResult({ result }) {
       {/* Итого */}
       <div className="rounded-xl p-6 text-white" style={{ backgroundColor: '#0055B8' }}>
         <p className="text-sm text-blue-200 mb-1">Примерная стоимость</p>
+        {destinationName && (
+          <p className="text-lg font-semibold text-white mb-0.5">{destinationName}</p>
+        )}
         <p className="text-3xl font-bold tracking-tight">{fmt(total, currency)}</p>
 
         <div className="flex flex-wrap gap-x-4 mt-1.5 text-sm text-blue-200">
