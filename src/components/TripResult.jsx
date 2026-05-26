@@ -1,12 +1,13 @@
+import { Plane, Building2, UtensilsCrossed, Bus, Sparkles, Receipt } from 'lucide-react'
 import { fmt, pluralNights, HOTEL_LABELS } from '../utils/calculator'
 
 const CATEGORIES = [
-  { key: 'flight',     label: 'Перелёт / транспорт', icon: '✈️' },
-  { key: 'hotel',      label: 'Проживание',           icon: '🏨' },
-  { key: 'food',       label: 'Питание',              icon: '🍽️' },
-  { key: 'transport',  label: 'Транспорт на месте',   icon: '🚌' },
-  { key: 'activities', label: 'Развлечения',          icon: '🎭' },
-  { key: 'misc',       label: 'Прочие расходы',       icon: '🧾' },
+  { key: 'flight',     label: 'Перелёт / транспорт', Icon: Plane           },
+  { key: 'hotel',      label: 'Проживание',           Icon: Building2      },
+  { key: 'food',       label: 'Питание',              Icon: UtensilsCrossed },
+  { key: 'transport',  label: 'Транспорт на месте',   Icon: Bus            },
+  { key: 'activities', label: 'Развлечения',          Icon: Sparkles       },
+  { key: 'misc',       label: 'Прочие расходы',       Icon: Receipt        },
 ]
 
 function Bar({ pct }) {
@@ -76,8 +77,8 @@ export default function TripResult({ result }) {
             return (
               <div key={cat.key}>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">
-                    <span className="mr-1.5">{cat.icon}</span>{cat.label}
+                  <span className="text-sm text-gray-600 flex items-center gap-1.5">
+                    <cat.Icon size={15} className="text-gray-400 shrink-0" />{cat.label}
                   </span>
                   <div className="shrink-0 ml-2 text-right">
                     <span className="text-sm font-medium text-gray-900">{fmt(amount, currency)}</span>

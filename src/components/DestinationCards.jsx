@@ -1,4 +1,6 @@
+import { Plane, Building2, UtensilsCrossed, Sparkles } from 'lucide-react'
 import { fmt, pluralNights, HOTEL_LABELS } from '../utils/calculator'
+import { PHOTOS } from '../data/photos'
 
 const TYPE_STYLE = {
   city:    'bg-blue-50 text-blue-600',
@@ -8,48 +10,58 @@ const TYPE_STYLE = {
 }
 
 function DestCard({ dest, currency, nights }) {
-  const { name, country, emoji, typeLabel, type, total, flight, hotel, food, activities } = dest
+  const { id, name, country, typeLabel, type, total, flight, hotel, food, activities } = dest
   const tagCls = TYPE_STYLE[type] || 'bg-gray-100 text-gray-600'
+  const photo = PHOTOS[id]
 
   return (
-    <div className="bg-white rounded-xl shadow-card p-4 flex flex-col gap-3
+    <div className="bg-white rounded-xl shadow-card overflow-hidden flex flex-col
                     hover:shadow-md transition-shadow cursor-default">
-      {/* Шапка */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-2xl shrink-0">{emoji}</span>
-          <div className="min-w-0">
-            <p className="font-semibold text-gray-900 leading-tight truncate">{name}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{country}</p>
-          </div>
+      {/* Фото */}
+      <div className="relative h-28 bg-gray-100 shrink-0">
+        {photo && (
+          <img
+            src={photo}
+            alt={name}
+            className="w-full h-full object-cover"
+            onError={e => { e.currentTarget.style.display = 'none' }}
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+        <div className="absolute bottom-2 left-3">
+          <p className="font-semibold text-white text-sm leading-tight drop-shadow">{name}</p>
+          <p className="text-xs text-white/70 mt-0.5">{country}</p>
         </div>
-        <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${tagCls}`}>
+        <span className={`absolute top-2 right-2 text-xs font-medium px-2 py-0.5 rounded-full ${tagCls}`}>
           {typeLabel}
         </span>
       </div>
 
-      {/* Итого */}
-      <div>
-        <p className="text-xl font-bold text-tutu-blue leading-none">{fmt(total, currency)}</p>
-        <p className="text-xs text-gray-400 mt-0.5">{pluralNights(nights)}</p>
-      </div>
+      {/* Контент */}
+      <div className="p-4 flex flex-col gap-3">
+        {/* Итого */}
+        <div>
+          <p className="text-xl font-bold text-tutu-blue leading-none">{fmt(total, currency)}</p>
+          <p className="text-xs text-gray-400 mt-0.5">{pluralNights(nights)}</p>
+        </div>
 
-      {/* Разбивка */}
-      <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 pt-2 border-t border-gray-100">
-        {[
-          { icon: '✈️', label: 'Перелёт', val: flight },
-          { icon: '🏨', label: 'Отель',   val: hotel  },
-          { icon: '🍽️', label: 'Питание', val: food   },
-          { icon: '🎭', label: 'Досуг',   val: activities },
-        ].map(({ icon, label, val }) => (
-          <div key={label} className="flex items-center gap-1.5">
-            <span className="text-sm">{icon}</span>
-            <div>
-              <p className="text-xs text-gray-400 leading-none">{label}</p>
-              <p className="text-xs font-medium text-gray-700">{fmt(val, currency)}</p>
+        {/* Разбивка */}
+        <div className="grid grid-cols-2 gap-x-3 gap-y-2 pt-2 border-t border-gray-100">
+          {[
+            { icon: Plane,           label: 'Перелёт', val: flight     },
+            { icon: Building2,       label: 'Отель',   val: hotel      },
+            { icon: UtensilsCrossed, label: 'Питание', val: food       },
+            { icon: Sparkles,        label: 'Досуг',   val: activities },
+          ].map(({ icon: Icon, label, val }) => (
+            <div key={label} className="flex items-center gap-1.5">
+              <Icon size={13} className="text-gray-400 shrink-0" />
+              <div>
+                <p className="text-xs text-gray-400 leading-none">{label}</p>
+                <p className="text-xs font-medium text-gray-700 mt-0.5">{fmt(val, currency)}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   )
