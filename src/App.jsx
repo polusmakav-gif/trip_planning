@@ -22,19 +22,34 @@ export default function App() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F2F5F8' }}>
 
-      <header className="bg-tutu-blue-dark px-4 py-3.5 shadow-sm">
-        <div className="max-w-5xl mx-auto flex items-center gap-3">
-          <span className="text-white font-bold text-lg tracking-tight">туту.ру</span>
-          <span className="text-purple-300 text-sm">/ калькулятор поездки</span>
+      <header className="bg-tutu-blue-dark px-4 py-3 shadow-sm">
+        <div className="max-w-5xl mx-auto flex items-center gap-4">
+          {/* Логотип tutu */}
+          <span style={{ fontStyle: 'italic', fontWeight: 900, fontSize: 22, letterSpacing: '-0.5px', lineHeight: 1 }}>
+            <span style={{ color: '#ffffff' }}>tu</span>
+            <span style={{ color: '#8B7FE8' }}>tu</span>
+          </span>
+          {/* Бейдж-тег */}
+          <span style={{
+            display: 'inline-flex', alignItems: 'center',
+            background: '#CCFF00', color: '#111',
+            fontWeight: 900, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em',
+            padding: '5px 12px 5px 18px',
+            clipPath: 'polygon(12px 0%, 100% 0%, 100% 100%, 12px 100%, 0% 50%)',
+          }}>
+            Калькулятор поездок
+          </span>
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-7">
 
         <div className="mb-5">
-          <h1 className="text-xl font-bold text-gray-900">Рассчитайте стоимость поездки</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Укажите параметры — получите подборку направлений с разбивкой по бюджету
+          <h1 className="text-2xl font-extrabold text-gray-900 leading-tight">
+            Куда летим и за сколько?
+          </h1>
+          <p className="text-sm text-gray-500 mt-1.5">
+            Подберите направление по бюджету — или введите маршрут и узнайте стоимость
           </p>
         </div>
 

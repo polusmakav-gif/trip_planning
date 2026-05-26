@@ -1,26 +1,27 @@
 import { useState, useEffect } from 'react'
-import { Plane, Building2, UtensilsCrossed, Sparkles } from 'lucide-react'
+import { Plane, Building2, UtensilsCrossed, Sparkles, Waves, Mountain, Landmark } from 'lucide-react'
 import { fmt, pluralNights, HOTEL_LABELS } from '../utils/calculator'
 import { WIKI_TITLES } from '../data/photos'
 
-const TYPE_STYLE = {
-  city:    'bg-blue-50 text-blue-600',
-  beach:   'bg-cyan-50 text-cyan-700',
-  active:  'bg-green-50 text-green-700',
-  culture: 'bg-purple-50 text-purple-700',
+const TYPE_BADGE = {
+  city:    { color: 'bg-violet-600',  Icon: Building2 },
+  beach:   { color: 'bg-cyan-500',    Icon: Waves     },
+  active:  { color: 'bg-green-500',   Icon: Mountain  },
+  culture: { color: 'bg-pink-600',    Icon: Landmark  },
 }
 
 const TYPE_PLACEHOLDER = {
-  city:    'bg-gradient-to-br from-blue-200 to-blue-400',
-  beach:   'bg-gradient-to-br from-cyan-200 to-teal-400',
-  active:  'bg-gradient-to-br from-green-200 to-emerald-400',
-  culture: 'bg-gradient-to-br from-purple-200 to-violet-400',
+  city:    'bg-gradient-to-br from-violet-300 to-violet-500',
+  beach:   'bg-gradient-to-br from-cyan-300 to-teal-500',
+  active:  'bg-gradient-to-br from-green-300 to-emerald-500',
+  culture: 'bg-gradient-to-br from-pink-300 to-pink-500',
 }
 
 function DestCard({ dest, currency, nights }) {
   const { id, name, country, typeLabel, type, total, flight, hotel, food, activities } = dest
-  const tagCls = TYPE_STYLE[type] || 'bg-gray-100 text-gray-600'
-  const placeholderCls = TYPE_PLACEHOLDER[type] || 'bg-gradient-to-br from-gray-200 to-gray-400'
+  const badge = TYPE_BADGE[type] || { color: 'bg-gray-500', Icon: Plane }
+  const placeholderCls = TYPE_PLACEHOLDER[type] || 'bg-gradient-to-br from-gray-300 to-gray-500'
+  const { Icon: BadgeIcon } = badge
 
   const [imgUrl, setImgUrl] = useState(null)
 
@@ -37,27 +38,27 @@ function DestCard({ dest, currency, nights }) {
     <div className="bg-white rounded-xl shadow-card overflow-hidden flex flex-col
                     hover:shadow-md transition-shadow cursor-default">
       {/* Фото */}
-      <div className={`relative h-28 shrink-0 ${!imgUrl ? placeholderCls : ''}`}>
+      <div className={`relative h-44 shrink-0 ${!imgUrl ? placeholderCls : ''}`}>
         {imgUrl && (
-          <img
-            src={imgUrl}
-            alt={name}
-            className="w-full h-full object-cover"
-            onError={() => setImgUrl(null)}
-          />
+          <img src={imgUrl} alt={name} className="w-full h-full object-cover"
+            onError={() => setImgUrl(null)} />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-        <div className="absolute bottom-2 left-3">
-          <p className="font-semibold text-white text-sm leading-tight drop-shadow">{name}</p>
-          <p className="text-xs text-white/70 mt-0.5">{country}</p>
+        <div className="absolute top-3 left-3 flex gap-1.5">
+          <span className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full text-white ${badge.color}`}>
+            <BadgeIcon size={11} strokeWidth={2.5} />
+            {typeLabel}
+          </span>
         </div>
-        <span className={`absolute top-2 right-2 text-xs font-medium px-2 py-0.5 rounded-full ${tagCls}`}>
-          {typeLabel}
-        </span>
       </div>
 
       {/* Контент */}
       <div className="p-4 flex flex-col gap-3">
+        {/* Название + страна */}
+        <div>
+          <p className="font-bold text-gray-900 text-[15px] leading-snug">{name}</p>
+          <p className="text-sm text-gray-400 mt-0.5">{country}</p>
+        </div>
+
         <div>
           <p className="text-xl font-bold text-tutu-blue leading-none">{fmt(total, currency)}</p>
           <p className="text-xs text-gray-400 mt-0.5">{pluralNights(nights)}</p>
