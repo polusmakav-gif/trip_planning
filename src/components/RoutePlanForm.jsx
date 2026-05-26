@@ -171,9 +171,9 @@ export default function RoutePlanForm({ onCalculate }) {
       {/* Предпочтения */}
       <Field label="Отель">
         <div className="flex gap-2">
-          {[1,2,3,4,5].map(s => (
+          {[2,3,4,5].map(s => (
             <button key={s} type="button" onClick={() => set('hotel')(s)}
-              title={['Хостел','Эконом','Стандарт','Комфорт','Люкс'][s-1]}
+              title={['Эконом','Стандарт','Комфорт','Люкс'][s-2]}
               className={`pill text-sm tracking-tighter ${form.hotel === s ? 'pill-on' : 'pill-off'}`}>
               {'★'.repeat(s)}
             </button>
